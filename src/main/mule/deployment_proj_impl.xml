@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="1181f93c-8377-4860-8b60-b6062d13f7d8" >
+		<http:listener-connection host="0.0.0.0" port="8083" />
+	</http:listener-config>
+	<flow name="deployment_proj_implFlow" doc:id="f40c50fd-2c7b-446f-badc-3f6aea4ba36d" >
+		<http:listener doc:name="Listener" doc:id="f5e20b1c-79c0-451f-8728-b23e0d96569a" config-ref="HTTP_Listener_config" path="/deploy"/>
+		<logger level="INFO" doc:name="Logger" doc:id="bbcc3010-2aa6-4445-b307-45c05b346740" message="#[payload]"/>
+		<ee:transform doc:name="Transform Message" doc:id="e20e509d-ad89-4b37-a84f-c099a87fa382" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map ((item, index) ->{
+    "customerName": item.customerName,
+    "customerId": item.customerId,
+    "phoneNumber": item.customerId,
+    "houseNo": item.address.houseNo,
+    "street": item.address.houseNo,
+    "city": item.address.city,
+    "country": item.address.country,
+    "zip": item.address.zip
+})]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="935fa652-d5a5-467e-b029-48973d0ac15a" message="#[payload]"/>
+	</flow>
+</mule>
